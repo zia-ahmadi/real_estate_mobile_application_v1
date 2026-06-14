@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\API\AuthController;
+use App\Http\Controllers\API\PropertyController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -11,3 +12,15 @@ Route::post('/auth/logout', [AuthController::class, 'logout'])->middleware('auth
 Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
+
+// Property routes
+Route::get('/properties', [PropertyController::class, 'index']);
+Route::get('/properties/search', [PropertyController::class, 'search']);
+Route::get('/properties/{property}', [PropertyController::class, 'show']);
+
+// Admin-only property routes
+Route::middleware(['auth:sanctum', 'admin'])->group(function () {
+    Route::post('/properties', [PropertyController::class, 'store']);
+    Route::put('/properties/{property}', [PropertyController::class, 'update']);
+    Route::delete('/properties/{property}', [PropertyController::class, 'destroy']);
+});
