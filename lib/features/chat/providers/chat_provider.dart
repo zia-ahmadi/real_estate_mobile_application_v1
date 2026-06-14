@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pusher_channels_flutter/pusher_channels_flutter.dart';
+import '../../../core/network/api_service.dart';
 import '../../properties/providers/property_provider.dart';
 import '../data/chat_models.dart';
 
@@ -116,9 +117,11 @@ class ChatNotifier extends StateNotifier<ChatState> {
   Future<bool> sendMessage(String body) async {
     if (state.conversation == null) return false;
     
+    Message? tempMessage;
+    
     try {
       // Optimistically add message to list
-      final tempMessage = Message(
+      tempMessage = Message(
         id: DateTime.now().millisecondsSinceEpoch,
         conversationId: state.conversation!.id,
         senderId: 0, // Will be filled by server
@@ -146,8 +149,10 @@ class ChatNotifier extends StateNotifier<ChatState> {
       return true;
     } catch (e) {
       // Remove temp message on error
-      final updatedMessages = state.messages.where((m) => m.id != tempMessage.id).toList();
-      state = state.copyWith(messages: updatedMessages);
+      if (tempMessage != null) {
+        final updatedMessages = state.messages.where((m) => m.id != tempMessage.id).toList();
+        state = state.copyWith(messages: updatedMessages);
+      }
       return false;
     }
   }

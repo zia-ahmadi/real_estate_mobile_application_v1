@@ -14,6 +14,8 @@ import '../../features/profile/screens/profile_screen.dart';
 import '../../features/admin/screens/admin_dashboard_screen.dart';
 import '../../features/admin/screens/admin_listings_screen.dart';
 import '../../features/admin/screens/add_edit_listing_screen.dart';
+import '../../features/admin/screens/admin_chat_inbox_screen.dart';
+import '../../features/admin/screens/admin_chat_detail_screen.dart';
 
 // Router Provider
 final routerProvider = Provider<GoRouter>((ref) {
@@ -147,7 +149,19 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/admin/chats',
         name: 'admin-chats',
-        builder: (context, state) => const PlaceholderScreen(title: 'Admin Chat Inbox'),
+        builder: (context, state) => const AdminChatInboxScreen(),
+      ),
+      GoRoute(
+        path: '/admin/chat/:id',
+        name: 'admin-chat-detail',
+        builder: (context, state) {
+          final id = int.parse(state.pathParameters['id']!);
+          final userName = state.uri.queryParameters['userName'];
+          return AdminChatDetailScreen(
+            conversationId: id,
+            userName: userName,
+          );
+        },
       ),
       GoRoute(
         path: '/admin/users',
