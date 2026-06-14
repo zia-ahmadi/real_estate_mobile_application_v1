@@ -6,6 +6,8 @@ import 'package:intl/intl.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_text_styles.dart';
 import '../../../core/network/api_service.dart';
+import '../../../shared/widgets/loading_widget.dart';
+import '../../../shared/widgets/error_widget.dart';
 import '../../properties/data/property_models.dart';
 import '../../properties/providers/property_provider.dart';
 
@@ -94,56 +96,17 @@ class _AdminListingsScreenState extends ConsumerState<AdminListingsScreen> {
         onRefresh: _loadProperties,
         child: propertyState.status == PropertyStatus.loading &&
                 propertyState.properties.isEmpty
-            ? const Center(
-                child: CircularProgressIndicator(),
-              )
+            ? const LoadingWidget()
             : propertyState.status == PropertyStatus.error
-                ? Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Icon(
-                          Icons.error_outline,
-                          size: 64,
-                          color: AppColors.error,
-                        ),
-                        const SizedBox(height: 16),
-                        Text(
-                          propertyState.error ?? 'Failed to load properties',
-                          style: AppTextStyles.bodyMedium,
-                        ),
-                        const SizedBox(height: 16),
-                        ElevatedButton(
-                          onPressed: _loadProperties,
-                          child: const Text('Retry'),
-                        ),
-                      ],
-                    ),
+                ? AppErrorWidget(
+                    message: propertyState.error ?? 'Failed to load properties',
+                    onRetry: _loadProperties,
                   )
                 : propertyState.properties.isEmpty
-                    ? Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.home_work_outlined,
-                              size: 80,
-                              color: AppColors.textSecondary,
-                            ),
-                            const SizedBox(height: 16),
-                            Text(
-                              'No properties yet',
-                              style: AppTextStyles.h5,
-                            ),
-                            const SizedBox(height: 8),
-                            Text(
-                              'Tap the + button to add your first property',
-                              style: AppTextStyles.bodyMedium.copyWith(
-                                color: AppColors.textSecondary,
-                              ),
-                            ),
-                          ],
-                        ),
+                    ? const AppEmptyWidget(
+                        message:
+                            'Tap the + button to add your first property',
+                        icon: Icons.home_work_outlined,
                       )
                     : ListView.builder(
                         padding: const EdgeInsets.all(16),

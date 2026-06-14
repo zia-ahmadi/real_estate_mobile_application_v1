@@ -4,6 +4,8 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_text_styles.dart';
+import '../../../shared/widgets/loading_widget.dart';
+import '../../../shared/widgets/error_widget.dart';
 import '../../chat/data/chat_models.dart';
 import '../providers/admin_chat_provider.dart';
 
@@ -56,57 +58,17 @@ class _AdminChatInboxScreenState extends ConsumerState<AdminChatInboxScreen> {
         onRefresh: _loadConversations,
         child: chatState.status == AdminChatStatus.loading &&
                 chatState.conversations.isEmpty
-            ? const Center(
-                child: CircularProgressIndicator(),
-              )
+            ? const LoadingWidget()
             : chatState.status == AdminChatStatus.error
-                ? Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Icon(
-                          Icons.error_outline,
-                          size: 64,
-                          color: AppColors.error,
-                        ),
-                        const SizedBox(height: 16),
-                        Text(
-                          chatState.error ?? 'Failed to load conversations',
-                          style: AppTextStyles.bodyMedium,
-                        ),
-                        const SizedBox(height: 16),
-                        ElevatedButton(
-                          onPressed: _loadConversations,
-                          child: const Text('Retry'),
-                        ),
-                      ],
-                    ),
+                ? AppErrorWidget(
+                    message: chatState.error ?? 'Failed to load conversations',
+                    onRetry: _loadConversations,
                   )
                 : chatState.conversations.isEmpty
-                    ? Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.chat_bubble_outline,
-                              size: 80,
-                              color: AppColors.textSecondary,
-                            ),
-                            const SizedBox(height: 16),
-                            Text(
-                              'No conversations yet',
-                              style: AppTextStyles.h5,
-                            ),
-                            const SizedBox(height: 8),
-                            Text(
-                              'When users message you, they will appear here',
-                              style: AppTextStyles.bodyMedium.copyWith(
-                                color: AppColors.textSecondary,
-                              ),
-                              textAlign: TextAlign.center,
-                            ),
-                          ],
-                        ),
+                    ? const AppEmptyWidget(
+                        message:
+                            'When users message you, they will appear here',
+                        icon: Icons.chat_bubble_outline,
                       )
                     : ListView.builder(
                         padding: const EdgeInsets.all(16),

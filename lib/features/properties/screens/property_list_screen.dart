@@ -7,6 +7,8 @@ import '../../../core/constants/app_text_styles.dart';
 import '../../../features/auth/providers/auth_provider.dart';
 import '../../../features/favourites/providers/favourite_provider.dart';
 import '../../../shared/widgets/property_card.dart';
+import '../../../shared/widgets/loading_widget.dart';
+import '../../../shared/widgets/error_widget.dart';
 import '../data/property_models.dart';
 import '../providers/property_provider.dart';
 
@@ -211,75 +213,45 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           const SizedBox(height: 16),
           // Property Grid
           Expanded(
-            child: propertyState.status == PropertyStatus.loading &&
-                    propertyState.properties.isEmpty
-                ? const Center(
-                    child: CircularProgressIndicator(),
-                  )
-                : propertyState.status == PropertyStatus.error
-                    ? Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const Icon(
-                              Icons.error_outline,
-                              size: 64,
-                              color: AppColors.error,
+            child: RefreshIndicator(
+              onRefresh: _loadProperties,
+              child: propertyState.status == PropertyStatus.loading &&
+                      propertyState.properties.isEmpty
+                  ? const LoadingWidget()
+                  : propertyState.status == PropertyStatus.error
+                      ? AppErrorWidget(
+                          message: propertyState.error ?? 'Failed to load properties',
+                          onRetry: _loadProperties,
+                        )
+                      : propertyState.properties.isEmpty
+                          ? const AppEmptyWidget(
+                              message: 'No properties found',
+                              icon: Icons.home_outlined,
+                            )
+                          : GridView.builder(
+                              controller: _scrollController,
+                              padding: const EdgeInsets.all(16),
+                              gridDelegate:
+                                  const SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: 2,
+                                childAspectRatio: 0.75,
+                                crossAxisSpacing: 16,
+                                mainAxisSpacing: 16,
+                              ),
+                              itemCount: propertyState.properties.length,
+                              itemBuilder: (context, index) {
+                                final property = propertyState.properties[index];
+                                return PropertyCard(
+                                  property: property,
+                                  onTap: () =>
+                                      _navigateToPropertyDetail(property.id),
+                                  showFavourite: isAuthenticated,
+                                  onFavouriteToggle: () =>
+                                      _onFavouriteToggle(property),
+                                );
+                              },
                             ),
-                            const SizedBox(height: 16),
-                            Text(
-                              propertyState.error ?? 'Failed to load properties',
-                              style: AppTextStyles.bodyMedium,
-                            ),
-                            const SizedBox(height: 16),
-                            ElevatedButton(
-                              onPressed: _loadProperties,
-                              child: const Text('Retry'),
-                            ),
-                          ],
-                        ),
-                      )
-                    : propertyState.properties.isEmpty
-                        ? Center(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(
-                                  Icons.home_outlined,
-                                  size: 64,
-                                  color: AppColors.textSecondary,
-                                ),
-                                const SizedBox(height: 16),
-                                Text(
-                                  'No properties found',
-                                  style: AppTextStyles.bodyMedium,
-                                ),
-                              ],
-                            ),
-                          )
-                        : GridView.builder(
-                            controller: _scrollController,
-                            padding: const EdgeInsets.all(16),
-                            gridDelegate:
-                                const SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 2,
-                              childAspectRatio: 0.75,
-                              crossAxisSpacing: 16,
-                              mainAxisSpacing: 16,
-                            ),
-                            itemCount: propertyState.properties.length,
-                            itemBuilder: (context, index) {
-                              final property = propertyState.properties[index];
-                              return PropertyCard(
-                                property: property,
-                                onTap: () =>
-                                    _navigateToPropertyDetail(property.id),
-                                showFavourite: isAuthenticated,
-                                onFavouriteToggle: () =>
-                                    _onFavouriteToggle(property),
-                              );
-                            },
-                          ),
+            ),
           ),
         ],
       ),

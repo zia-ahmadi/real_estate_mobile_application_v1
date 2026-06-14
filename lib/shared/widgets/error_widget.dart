@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import '../../core/constants/app_colors.dart';
 import '../../core/constants/app_text_styles.dart';
 
-class ErrorWidget extends StatelessWidget {
+class AppErrorWidget extends StatelessWidget {
   final String message;
   final VoidCallback? onRetry;
 
-  const ErrorWidget({
+  const AppErrorWidget({
     super.key,
     required this.message,
     this.onRetry,
@@ -56,11 +56,11 @@ class ErrorWidget extends StatelessWidget {
   }
 }
 
-class EmptyWidget extends StatelessWidget {
+class AppEmptyWidget extends StatelessWidget {
   final String message;
   final IconData? icon;
 
-  const EmptyWidget({
+  const AppEmptyWidget({
     super.key,
     required this.message,
     this.icon,

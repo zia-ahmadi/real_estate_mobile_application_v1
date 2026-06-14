@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_text_styles.dart';
+import '../../../shared/widgets/loading_widget.dart';
+import '../../../shared/widgets/error_widget.dart';
 import '../../../features/auth/data/auth_models.dart';
 import '../providers/admin_users_provider.dart';
 
@@ -69,49 +71,16 @@ class _AdminUsersScreenState extends ConsumerState<AdminUsersScreen> {
         onRefresh: _loadUsers,
         child: adminUsersState.status == AdminUsersStatus.loading &&
                 adminUsersState.users.isEmpty
-            ? const Center(
-                child: CircularProgressIndicator(),
-              )
+            ? const LoadingWidget()
             : adminUsersState.status == AdminUsersStatus.error
-                ? Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Icon(
-                          Icons.error_outline,
-                          size: 64,
-                          color: AppColors.error,
-                        ),
-                        const SizedBox(height: 16),
-                        Text(
-                          adminUsersState.error ?? 'Failed to load users',
-                          style: AppTextStyles.bodyMedium,
-                        ),
-                        const SizedBox(height: 16),
-                        ElevatedButton(
-                          onPressed: _loadUsers,
-                          child: const Text('Retry'),
-                        ),
-                      ],
-                    ),
+                ? AppErrorWidget(
+                    message: adminUsersState.error ?? 'Failed to load users',
+                    onRetry: _loadUsers,
                   )
                 : adminUsersState.users.isEmpty
-                    ? Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.people_outline,
-                              size: 80,
-                              color: AppColors.textSecondary,
-                            ),
-                            const SizedBox(height: 16),
-                            Text(
-                              'No users yet',
-                              style: AppTextStyles.h5,
-                            ),
-                          ],
-                        ),
+                    ? const AppEmptyWidget(
+                        message: 'No users yet',
+                        icon: Icons.people_outline,
                       )
                     : ListView.builder(
                         padding: const EdgeInsets.all(16),
