@@ -111,6 +111,15 @@ class PropertyNotifier extends StateNotifier<PropertyState> {
   void reset() {
     state = PropertyState();
   }
+
+  Future<Property?> getProperty(int id) async {
+    try {
+      final response = await _apiService.getProperty(id);
+      return Property.fromJson(response);
+    } catch (e) {
+      return null;
+    }
+  }
 }
 
 // Providers
@@ -122,4 +131,26 @@ final propertyProvider = StateNotifierProvider<PropertyNotifier, PropertyState>(
 
 final searchFiltersProvider = StateProvider<SearchFilters>((ref) {
   return SearchFilters();
+});
+
+// Single property provider
+class PropertyDetailNotifier extends StateNotifier<Property?> {
+  final ApiService _apiService;
+
+  PropertyDetailNotifier(this._apiService) : super(null);
+
+  Future<void> loadProperty(int id) async {
+    state = null;
+    try {
+      final response = await _apiService.getProperty(id);
+      state = Property.fromJson(response);
+    } catch (e) {
+      state = null;
+    }
+  }
+}
+
+final propertyDetailProvider =
+    StateNotifierProvider.family<PropertyDetailNotifier, Property?, int>((ref, id) {
+  return PropertyDetailNotifier(ref.watch(apiServiceProvider))..loadProperty(id);
 });
