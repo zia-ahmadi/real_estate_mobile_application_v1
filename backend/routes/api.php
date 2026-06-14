@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\API\AdminController;
 use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\API\ConversationController;
 use App\Http\Controllers\API\FavouriteController;
@@ -42,9 +43,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/conversations/{conversation}/messages', [MessageController::class, 'store']);
 });
 
-// Admin-only conversation routes
+// Admin-only routes
 Route::middleware(['auth:sanctum', 'admin'])->group(function () {
+    Route::get('/admin/dashboard', [AdminController::class, 'dashboard']);
     Route::get('/admin/conversations', [ConversationController::class, 'adminIndex']);
+    Route::get('/admin/users', [AdminController::class, 'users']);
+    Route::post('/admin/users/{user}/block', [AdminController::class, 'toggleBlock']);
 });
 
 // Pusher broadcasting authentication
