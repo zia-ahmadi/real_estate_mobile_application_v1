@@ -50,7 +50,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
         final user = User.fromJson(userData);
         
         // Save updated user data
-        await _storage.write(key: 'user_data', jsonEncode(user.toJson()));
+        await _storage.write(key: 'user_data', value: jsonEncode(user.toJson()));
         
         state = state.copyWith(
           status: AuthStatus.authenticated,
@@ -77,8 +77,8 @@ class AuthNotifier extends StateNotifier<AuthState> {
       final token = response['token'];
       
       // Save token and user data
-      await _storage.write(key: 'auth_token', token);
-      await _storage.write(key: 'user_data', jsonEncode(user.toJson()));
+      await _storage.write(key: 'auth_token', value: token);
+      await _storage.write(key: 'user_data', value: jsonEncode(user.toJson()));
       
       state = state.copyWith(
         status: AuthStatus.authenticated,
@@ -105,8 +105,8 @@ class AuthNotifier extends StateNotifier<AuthState> {
       final token = response['token'];
       
       // Save token and user data
-      await _storage.write(key: 'auth_token', token);
-      await _storage.write(key: 'user_data', jsonEncode(user.toJson()));
+      await _storage.write(key: 'auth_token', value: token);
+      await _storage.write(key: 'user_data', value: jsonEncode(user.toJson()));
       
       state = state.copyWith(
         status: AuthStatus.authenticated,
