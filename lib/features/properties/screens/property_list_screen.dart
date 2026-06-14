@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_text_styles.dart';
 import '../../../features/auth/providers/auth_provider.dart';
+import '../../../features/favourites/providers/favourite_provider.dart';
 import '../../../shared/widgets/property_card.dart';
 import '../data/property_models.dart';
 import '../providers/property_provider.dart';
@@ -103,8 +104,22 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     context.push('/property/$propertyId');
   }
 
-  void _onFavouriteToggle(Property property) {
-    // TODO: Implement favourite toggle
+  Future<void> _onFavouriteToggle(Property property) async {
+    final success = await ref.read(favouriteProvider.notifier).toggleFavourite(property.id);
+    
+    if (!mounted) return;
+    
+    if (!success) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Failed to update favourites'),
+          backgroundColor: AppColors.error,
+        ),
+      );
+    } else {
+      // Reload properties to update favourite status
+      await ref.read(propertyProvider.notifier).loadProperties();
+    }
   }
 
   @override

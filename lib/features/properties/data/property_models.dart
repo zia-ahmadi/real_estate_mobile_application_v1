@@ -87,6 +87,46 @@ class Property {
   bool get isAvailable => status == 'available';
   bool get isSold => status == 'sold';
   bool get hasLocation => latitude != null && longitude != null;
+
+  Property copyWith({
+    int? id,
+    String? title,
+    String? description,
+    double? price,
+    String? city,
+    String? address,
+    int? bedrooms,
+    int? bathrooms,
+    double? area,
+    String? status,
+    String? coverImage,
+    List<String>? images,
+    bool? isFavourited,
+    double? latitude,
+    double? longitude,
+    String? createdAt,
+    String? updatedAt,
+  }) {
+    return Property(
+      id: id ?? this.id,
+      title: title ?? this.title,
+      description: description ?? this.description,
+      price: price ?? this.price,
+      city: city ?? this.city,
+      address: address ?? this.address,
+      bedrooms: bedrooms ?? this.bedrooms,
+      bathrooms: bathrooms ?? this.bathrooms,
+      area: area ?? this.area,
+      status: status ?? this.status,
+      coverImage: coverImage ?? this.coverImage,
+      images: images ?? this.images,
+      isFavourited: isFavourited ?? this.isFavourited,
+      latitude: latitude ?? this.latitude,
+      longitude: longitude ?? this.longitude,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+    );
+  }
 }
 
 class PropertyListResponse {

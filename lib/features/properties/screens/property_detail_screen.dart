@@ -7,6 +7,7 @@ import 'package:intl/intl.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_text_styles.dart';
 import '../../../features/auth/providers/auth_provider.dart';
+import '../../../features/favourites/providers/favourite_provider.dart';
 import '../../../shared/widgets/loading_widget.dart';
 import '../data/property_models.dart';
 import '../providers/property_provider.dart';
@@ -32,8 +33,22 @@ class _PropertyDetailScreenState extends ConsumerState<PropertyDetailScreen> {
     return formatter.format(price);
   }
 
-  void _toggleFavourite(Property property) {
-    // TODO: Implement favourite toggle
+  Future<void> _toggleFavourite(Property property) async {
+    final success = await ref.read(favouriteProvider.notifier).toggleFavourite(property.id);
+    
+    if (!mounted) return;
+    
+    if (!success) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Failed to update favourites'),
+          backgroundColor: AppColors.error,
+        ),
+      );
+    } else {
+      // Reload property to update favourite status
+      await ref.read(propertyDetailProvider(int.parse(widget.id)).notifier).loadProperty(int.parse(widget.id));
+    }
   }
 
   void _deleteProperty(int propertyId) async {
