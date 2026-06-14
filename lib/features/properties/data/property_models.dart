@@ -12,6 +12,7 @@ class Property {
   final String? coverImage;
   final List<String> images;
   final bool isFavourited;
+  final bool isFeatured;
   final double? latitude;
   final double? longitude;
   final String? createdAt;
@@ -31,6 +32,7 @@ class Property {
     this.coverImage,
     required this.images,
     this.isFavourited = false,
+    this.isFeatured = false,
     this.latitude,
     this.longitude,
     this.createdAt,
@@ -51,10 +53,13 @@ class Property {
       status: json['status'] as String,
       coverImage: json['cover_image'] as String?,
       images: (json['images'] as List<dynamic>?)
-              ?.map((e) => e.toString())
+              ?.map((e) => e is Map ? (e['url'] as String?) : e.toString())
+              .where((e) => e != null)
+              .map((e) => e!)
               .toList() ??
           [],
       isFavourited: json['is_favourited'] as bool? ?? false,
+      isFeatured: json['is_featured'] as bool? ?? false,
       latitude: json['latitude'] as double?,
       longitude: json['longitude'] as double?,
       createdAt: json['created_at'] as String?,
@@ -77,6 +82,7 @@ class Property {
       'cover_image': coverImage,
       'images': images,
       'is_favourited': isFavourited,
+      'is_featured': isFeatured,
       'latitude': latitude,
       'longitude': longitude,
       'created_at': createdAt,
@@ -102,6 +108,7 @@ class Property {
     String? coverImage,
     List<String>? images,
     bool? isFavourited,
+    bool? isFeatured,
     double? latitude,
     double? longitude,
     String? createdAt,
@@ -121,6 +128,7 @@ class Property {
       coverImage: coverImage ?? this.coverImage,
       images: images ?? this.images,
       isFavourited: isFavourited ?? this.isFavourited,
+      isFeatured: isFeatured ?? this.isFeatured,
       latitude: latitude ?? this.latitude,
       longitude: longitude ?? this.longitude,
       createdAt: createdAt ?? this.createdAt,

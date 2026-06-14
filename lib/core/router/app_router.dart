@@ -13,6 +13,7 @@ import '../../features/chat/screens/chat_detail_screen.dart';
 import '../../features/profile/screens/profile_screen.dart';
 import '../../features/admin/screens/admin_dashboard_screen.dart';
 import '../../features/admin/screens/admin_listings_screen.dart';
+import '../../features/admin/screens/add_edit_listing_screen.dart';
 
 // Router Provider
 final routerProvider = Provider<GoRouter>((ref) {
@@ -133,14 +134,14 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/admin/listing/new',
         name: 'admin-add-listing',
-        builder: (context, state) => const PlaceholderScreen(title: 'Add Listing'),
+        builder: (context, state) => const AddEditListingScreen(),
       ),
       GoRoute(
         path: '/admin/listing/:id/edit',
         name: 'admin-edit-listing',
         builder: (context, state) {
           final id = state.pathParameters['id']!;
-          return PlaceholderScreen(title: 'Edit Listing: $id');
+          return AddEditListingScreen(id: id);
         },
       ),
       GoRoute(
