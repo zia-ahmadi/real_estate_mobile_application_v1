@@ -1,22 +1,25 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import '../constants/api_constants.dart';
 
 class DioClient {
-  final Dio _dio;
-  final FlutterSecureStorage _storage = const FlutterSecureStorage();
+  static final DioClient _instance = DioClient._internal();
+  factory DioClient() => _instance;
   
-  DioClient() : _dio = Dio(BaseOptions(
-    baseUrl: ApiConstants.baseUrl,
-    connectTimeout: ApiConstants.connectionTimeout,
-    receiveTimeout: ApiConstants.receiveTimeout,
-    headers: {
-      'Accept': 'application/json',
-      'Content-Type': 'application/json',
-    },
-  )) {
+  DioClient._internal() {
+    _dio = Dio(BaseOptions(
+      baseUrl: 'http://10.0.2.2/real-estate-api/public/api',
+      connectTimeout: const Duration(seconds: 30),
+      receiveTimeout: const Duration(seconds: 30),
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+    ));
     _setupInterceptors();
   }
+  
+  late final Dio _dio;
+  final FlutterSecureStorage _storage = const FlutterSecureStorage();
   
   Dio get dio => _dio;
   
@@ -67,5 +70,10 @@ class DioClient {
   // For multipart/form-data (image uploads)
   Future<Response> upload(String path, FormData data) async {
     return await _dio.post(path, data: data);
+  }
+  
+  // For multipart/form-data with PUT
+  Future<Response> uploadPut(String path, FormData data) async {
+    return await _dio.put(path, data: data);
   }
 }

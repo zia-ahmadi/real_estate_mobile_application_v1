@@ -1,6 +1,6 @@
 class ApiConstants {
-  // Base URL - Update with your Laravel backend URL
-  static const String baseUrl = 'http://10.0.2.2:8000/api';
+  // Base URL - Android emulator to XAMPP
+  static const String baseUrl = 'http://10.0.2.2/real-estate-api/public/api';
   
   // Auth Endpoints
   static const String register = '/auth/register';
