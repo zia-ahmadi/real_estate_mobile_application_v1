@@ -1,0 +1,47 @@
+name: real_estate_app
+description: A real estate mobile application for buying and selling properties.
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  
+  # State Management
+  flutter_riverpod: ^2.4.9
+  
+  # Navigation
+  go_router: ^13.0.0
+  
+  # HTTP Client
+  dio: ^5.4.0
+  
+  # Secure Storage
+  flutter_secure_storage: ^9.0.0
+  
+  # Maps
+  google_maps_flutter: ^2.5.0
+  
+  # Real-time Chat
+  pusher_channels_flutter: ^2.1.0
+  
+  # Image Handling
+  image_picker: ^1.0.5
+  cached_network_image: ^3.3.0
+  
+  # UI Components
+  carousel_slider: ^4.2.1
+  
+  # Utilities
+  intl: ^0.18.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.0
+
+flutter:
+  uses-material-design: true
