@@ -16,6 +16,7 @@ import '../../features/admin/screens/admin_listings_screen.dart';
 import '../../features/admin/screens/add_edit_listing_screen.dart';
 import '../../features/admin/screens/admin_chat_inbox_screen.dart';
 import '../../features/admin/screens/admin_chat_detail_screen.dart';
+import '../../features/admin/screens/admin_users_screen.dart';
 
 // Router Provider
 final routerProvider = Provider<GoRouter>((ref) {
@@ -166,7 +167,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/admin/users',
         name: 'admin-users',
-        builder: (context, state) => const PlaceholderScreen(title: 'Admin Users'),
+        builder: (context, state) => const AdminUsersScreen(),
       ),
     ],
     errorBuilder: (context, state) => ErrorScreen(error: state.error),
