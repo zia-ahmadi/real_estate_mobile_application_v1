@@ -1,37 +1,31 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import '../../core/constants/app_colors.dart';
 import '../../core/constants/app_text_styles.dart';
+import '../../features/properties/data/property_models.dart';
 
 class PropertyCard extends StatelessWidget {
-  final String id;
-  final String title;
-  final String city;
-  final double price;
-  final int bedrooms;
-  final int bathrooms;
-  final double area;
-  final String? coverImage;
-  final bool isFeatured;
+  final Property property;
   final VoidCallback onTap;
   final VoidCallback? onFavouriteToggle;
-  final bool isFavourited;
+  final bool showFavourite;
 
   const PropertyCard({
     super.key,
-    required this.id,
-    required this.title,
-    required this.city,
-    required this.price,
-    required this.bedrooms,
-    required this.bathrooms,
-    required this.area,
-    this.coverImage,
-    this.isFeatured = false,
+    required this.property,
     required this.onTap,
     this.onFavouriteToggle,
-    this.isFavourited = false,
+    this.showFavourite = false,
   });
+
+  String _formatPrice(double price) {
+    final formatter = NumberFormat.currency(
+      symbol: '\$',
+      decimalDigits: 0,
+    );
+    return formatter.format(price);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -53,21 +47,21 @@ class PropertyCard extends StatelessWidget {
                   borderRadius: const BorderRadius.vertical(
                     top: Radius.circular(12),
                   ),
-                  child: coverImage != null
+                  child: property.coverImage != null
                       ? CachedNetworkImage(
-                          imageUrl: coverImage!,
-                          height: 200,
+                          imageUrl: property.coverImage!,
+                          height: 180,
                           width: double.infinity,
                           fit: BoxFit.cover,
                           placeholder: (context, url) => Container(
-                            height: 200,
+                            height: 180,
                             color: AppColors.surface,
                             child: const Center(
                               child: CircularProgressIndicator(),
                             ),
                           ),
                           errorWidget: (context, url, error) => Container(
-                            height: 200,
+                            height: 180,
                             color: AppColors.surface,
                             child: const Icon(
                               Icons.image_not_supported,
@@ -77,7 +71,7 @@ class PropertyCard extends StatelessWidget {
                           ),
                         )
                       : Container(
-                          height: 200,
+                          height: 180,
                           color: AppColors.surface,
                           child: const Icon(
                             Icons.image,
@@ -86,32 +80,8 @@ class PropertyCard extends StatelessWidget {
                           ),
                         ),
                 ),
-                // Featured Badge
-                if (isFeatured)
-                  Positioned(
-                    top: 8,
-                    left: 8,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 8,
-                        vertical: 4,
-                      ),
-                      decoration: BoxDecoration(
-                        color: AppColors.accent,
-                        borderRadius: BorderRadius.circular(4),
-                      ),
-                      child: const Text(
-                        'Featured',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 12,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ),
                 // Favourite Button
-                if (onFavouriteToggle != null)
+                if (showFavourite && onFavouriteToggle != null)
                   Positioned(
                     top: 8,
                     right: 8,
@@ -131,8 +101,8 @@ class PropertyCard extends StatelessWidget {
                           ],
                         ),
                         child: Icon(
-                          isFavourited ? Icons.favorite : Icons.favorite_border,
-                          color: isFavourited ? AppColors.error : AppColors.text,
+                          property.isFavourited ? Icons.favorite : Icons.favorite_border,
+                          color: property.isFavourited ? AppColors.error : AppColors.text,
                           size: 20,
                         ),
                       ),
@@ -148,13 +118,13 @@ class PropertyCard extends StatelessWidget {
                 children: [
                   // Price
                   Text(
-                    '\$${price.toStringAsFixed(2)}',
+                    _formatPrice(property.price),
                     style: AppTextStyles.price,
                   ),
                   const SizedBox(height: 4),
                   // Title
                   Text(
-                    title,
+                    property.title,
                     style: AppTextStyles.h6,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
@@ -171,7 +141,7 @@ class PropertyCard extends StatelessWidget {
                       const SizedBox(width: 4),
                       Expanded(
                         child: Text(
-                          city,
+                          property.city,
                           style: AppTextStyles.caption,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
@@ -185,20 +155,12 @@ class PropertyCard extends StatelessWidget {
                     children: [
                       _buildDetailItem(
                         Icons.bed,
-                        '$bedrooms',
-                        'Bedrooms',
-                      ),
-                      const SizedBox(width: 16),
-                      _buildDetailItem(
-                        Icons.bathtub,
-                        '$bathrooms',
-                        'Bathrooms',
+                        '${property.bedrooms}',
                       ),
                       const SizedBox(width: 16),
                       _buildDetailItem(
                         Icons.square_foot,
-                        '${area.toStringAsFixed(0)}',
-                        'Sq ft',
+                        '${property.area.toStringAsFixed(0)}',
                       ),
                     ],
                   ),
@@ -211,7 +173,7 @@ class PropertyCard extends StatelessWidget {
     );
   }
 
-  Widget _buildDetailItem(IconData icon, String value, String label) {
+  Widget _buildDetailItem(IconData icon, String value) {
     return Row(
       children: [
         Icon(
