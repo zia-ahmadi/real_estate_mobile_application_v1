@@ -138,7 +138,7 @@ class ChatNotifier extends StateNotifier<ChatState> {
       
       // Replace temp message with actual message
       final updatedMessages = state.messages.map((m) {
-        if (m.id == tempMessage.id) {
+        if (m.id == tempMessage!.id) {
           return message;
         }
         return m;
@@ -150,7 +150,7 @@ class ChatNotifier extends StateNotifier<ChatState> {
     } catch (e) {
       // Remove temp message on error
       if (tempMessage != null) {
-        final updatedMessages = state.messages.where((m) => m.id != tempMessage.id).toList();
+        final updatedMessages = state.messages.where((m) => m.id != tempMessage!.id).toList();
         state = state.copyWith(messages: updatedMessages);
       }
       return false;

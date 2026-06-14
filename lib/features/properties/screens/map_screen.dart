@@ -73,7 +73,8 @@ class _MapScreenState extends ConsumerState<MapScreen> {
     }
 
     setState(() {
-      _markers = markers;
+      _markers.clear();
+      _markers.addAll(markers);
     });
 
     // If a specific property ID is provided, center on it

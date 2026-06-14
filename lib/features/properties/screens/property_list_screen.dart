@@ -286,15 +286,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             icon: Icon(Icons.map),
             label: 'Map',
           ),
-          BottomNavigationBarItem(
+          const BottomNavigationBarItem(
             icon: Icon(Icons.favorite),
             label: 'Favourites',
-            enabled: isAuthenticated,
           ),
-          BottomNavigationBarItem(
+          const BottomNavigationBarItem(
             icon: Icon(Icons.chat),
             label: 'Chat',
-            enabled: isAuthenticated,
           ),
         ],
       ),

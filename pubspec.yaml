@@ -34,7 +34,7 @@ dependencies:
   cached_network_image: ^3.3.0
   
   # UI Components
-  carousel_slider: ^4.2.1
+  carousel_slider: ^5.1.2
   
   # Utilities
   intl: ^0.18.1

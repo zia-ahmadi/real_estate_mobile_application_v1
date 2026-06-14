@@ -61,7 +61,7 @@
     },
     {
       "name": "carousel_slider",
-      "version": "4.2.1",
+      "version": "5.1.2",
       "dependencies": [
         "flutter"
       ]
