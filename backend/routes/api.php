@@ -1,9 +1,12 @@
 <?php
 
 use App\Http\Controllers\API\AuthController;
+use App\Http\Controllers\API\ConversationController;
 use App\Http\Controllers\API\FavouriteController;
+use App\Http\Controllers\API\MessageController;
 use App\Http\Controllers\API\PropertyController;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\Route;
 
 Route::post('/auth/register', [AuthController::class, 'register']);
@@ -31,3 +34,18 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/favourites/{property}', [FavouriteController::class, 'toggle']);
     Route::get('/favourites', [FavouriteController::class, 'index']);
 });
+
+// Conversation routes
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/conversations', [ConversationController::class, 'index']);
+    Route::get('/conversations/{conversation}/messages', [MessageController::class, 'index']);
+    Route::post('/conversations/{conversation}/messages', [MessageController::class, 'store']);
+});
+
+// Admin-only conversation routes
+Route::middleware(['auth:sanctum', 'admin'])->group(function () {
+    Route::get('/admin/conversations', [ConversationController::class, 'adminIndex']);
+});
+
+// Pusher broadcasting authentication
+Broadcast::routes(['middleware' => ['auth:sanctum']]);
