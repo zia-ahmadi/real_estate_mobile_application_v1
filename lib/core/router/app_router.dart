@@ -9,6 +9,7 @@ import '../../features/properties/screens/property_list_screen.dart';
 import '../../features/properties/screens/property_detail_screen.dart';
 import '../../features/properties/screens/map_screen.dart';
 import '../../features/favourites/screens/favourites_screen.dart';
+import '../../features/chat/screens/chat_detail_screen.dart';
 
 // Router Provider
 final routerProvider = Provider<GoRouter>((ref) {
@@ -109,7 +110,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/chat',
         name: 'chat',
-        builder: (context, state) => const PlaceholderScreen(title: 'Chat'),
+        builder: (context, state) => const ChatScreen(),
       ),
       GoRoute(
         path: '/profile',
