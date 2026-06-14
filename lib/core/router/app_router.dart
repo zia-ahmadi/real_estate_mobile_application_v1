@@ -11,6 +11,7 @@ import '../../features/properties/screens/map_screen.dart';
 import '../../features/favourites/screens/favourites_screen.dart';
 import '../../features/chat/screens/chat_detail_screen.dart';
 import '../../features/profile/screens/profile_screen.dart';
+import '../../features/admin/screens/admin_dashboard_screen.dart';
 
 // Router Provider
 final routerProvider = Provider<GoRouter>((ref) {
@@ -121,7 +122,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/admin',
         name: 'admin-dashboard',
-        builder: (context, state) => const PlaceholderScreen(title: 'Admin Dashboard'),
+        builder: (context, state) => const AdminDashboardScreen(),
       ),
       GoRoute(
         path: '/admin/listings',
