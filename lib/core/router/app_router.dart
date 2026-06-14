@@ -7,6 +7,7 @@ import '../../features/auth/screens/register_screen.dart';
 import '../../features/auth/providers/auth_provider.dart';
 import '../../features/properties/screens/property_list_screen.dart';
 import '../../features/properties/screens/property_detail_screen.dart';
+import '../../features/properties/screens/map_screen.dart';
 
 // Router Provider
 final routerProvider = Provider<GoRouter>((ref) {
@@ -84,7 +85,10 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/map',
         name: 'map',
-        builder: (context, state) => const PlaceholderScreen(title: 'Map'),
+        builder: (context, state) {
+          final propertyId = state.uri.queryParameters['propertyId'];
+          return MapScreen(propertyId: propertyId);
+        },
       ),
       GoRoute(
         path: '/login',

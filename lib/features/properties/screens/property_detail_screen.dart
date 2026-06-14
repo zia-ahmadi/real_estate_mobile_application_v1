@@ -244,8 +244,7 @@ class _PropertyDetailScreenState extends ConsumerState<PropertyDetailScreen> {
                           width: double.infinity,
                           child: ElevatedButton.icon(
                             onPressed: () {
-                              // TODO: Navigate to map with property location
-                              context.push('/map');
+                              context.push('/map?propertyId=${property.id}');
                             },
                             icon: const Icon(Icons.map),
                             label: const Text('View on Map'),

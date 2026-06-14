@@ -12,6 +12,8 @@ class Property {
   final String? coverImage;
   final List<String> images;
   final bool isFavourited;
+  final double? latitude;
+  final double? longitude;
   final String? createdAt;
   final String? updatedAt;
 
@@ -29,6 +31,8 @@ class Property {
     this.coverImage,
     required this.images,
     this.isFavourited = false,
+    this.latitude,
+    this.longitude,
     this.createdAt,
     this.updatedAt,
   });
@@ -51,6 +55,8 @@ class Property {
               .toList() ??
           [],
       isFavourited: json['is_favourited'] as bool? ?? false,
+      latitude: json['latitude'] as double?,
+      longitude: json['longitude'] as double?,
       createdAt: json['created_at'] as String?,
       updatedAt: json['updated_at'] as String?,
     );
@@ -71,6 +77,8 @@ class Property {
       'cover_image': coverImage,
       'images': images,
       'is_favourited': isFavourited,
+      'latitude': latitude,
+      'longitude': longitude,
       'created_at': createdAt,
       'updated_at': updatedAt,
     };
@@ -78,6 +86,7 @@ class Property {
 
   bool get isAvailable => status == 'available';
   bool get isSold => status == 'sold';
+  bool get hasLocation => latitude != null && longitude != null;
 }
 
 class PropertyListResponse {
