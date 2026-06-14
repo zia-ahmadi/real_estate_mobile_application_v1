@@ -1,74 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../constants/app_colors.dart';
-
-// Placeholder imports for screens - replace with actual imports when screens are created
-// import '../../features/auth/screens/login_screen.dart';
-// import '../../features/auth/screens/register_screen.dart';
-// import '../../features/auth/screens/profile_screen.dart';
-// import '../../features/properties/screens/property_list_screen.dart';
-// import '../../features/properties/screens/property_detail_screen.dart';
-// import '../../features/properties/screens/map_screen.dart';
-// import '../../features/favourites/screens/favourites_screen.dart';
-// import '../../features/chat/screens/chat_detail_screen.dart';
-// import '../../features/admin/screens/admin_dashboard_screen.dart';
-
-part 'app_router.g.dart';
-
-// Auth State Provider
-enum AuthStatus { initial, authenticated, unauthenticated }
-
-@riverpod
-class AuthNotifier extends _$AuthNotifier {
-  @override
-  AuthStatus build() {
-    return AuthStatus.initial;
-  }
-  
-  Future<void> checkAuthStatus() async {
-    // TODO: Check token from FlutterSecureStorage and validate with API
-    // For now, default to unauthenticated
-    state = AuthStatus.unauthenticated;
-  }
-  
-  void login(String role) {
-    // TODO: Store token and user role
-    state = AuthStatus.authenticated;
-  }
-  
-  void logout() {
-    // TODO: Clear token
-    state = AuthStatus.unauthenticated;
-  }
-  
-  String? getUserRole() {
-    // TODO: Return user role from storage
-    return 'user'; // Default to 'user' for now
-  }
-}
+import '../../features/auth/screens/login_screen.dart';
+import '../../features/auth/screens/register_screen.dart';
+import '../../features/auth/providers/auth_provider.dart';
 
 // Router Provider
-@riverpod
-GoRouter router(Ref ref) {
-  final authStatus = ref.watch(authNotifierProvider);
-  final userRole = ref.watch(authNotifierProvider.notifier).getUserRole();
+final routerProvider = Provider<GoRouter>((ref) {
+  final authState = ref.watch(authProvider);
+  final userRole = authState.user?.role;
   
   return GoRouter(
     initialLocation: '/',
     debugLogDiagnostics: true,
     redirect: (context, state) {
-      final isLoggedIn = authStatus == AuthStatus.authenticated;
+      final isAuthenticated = authState.status == AuthStatus.authenticated;
       final isAdmin = userRole == 'admin';
+      final isInitial = authState.status == AuthStatus.initial;
       
       // Splash screen - check auth and redirect
       if (state.matchedLocation == '/') {
-        if (authStatus == AuthStatus.initial) {
+        if (isInitial) {
           return '/'; // Stay on splash screen while checking
         }
         
-        if (isLoggedIn) {
+        if (isAuthenticated) {
           return isAdmin ? '/admin' : '/home';
         }
         
@@ -78,7 +35,7 @@ GoRouter router(Ref ref) {
       // Auth-required routes
       final authRequiredRoutes = ['/favourites', '/chat', '/profile'];
       if (authRequiredRoutes.any((route) => state.matchedLocation.startsWith(route))) {
-        if (!isLoggedIn) {
+        if (!isAuthenticated) {
           return '/login';
         }
       }
@@ -86,7 +43,7 @@ GoRouter router(Ref ref) {
       // Admin-only routes
       final adminRoutes = ['/admin'];
       if (adminRoutes.any((route) => state.matchedLocation.startsWith(route))) {
-        if (!isLoggedIn) {
+        if (!isAuthenticated) {
           return '/login';
         }
         if (!isAdmin) {
@@ -96,7 +53,7 @@ GoRouter router(Ref ref) {
       
       // Prevent logged-in users from accessing login/register
       if (state.matchedLocation == '/login' || state.matchedLocation == '/register') {
-        if (isLoggedIn) {
+        if (isAuthenticated) {
           return isAdmin ? '/admin' : '/home';
         }
       }
@@ -130,12 +87,12 @@ GoRouter router(Ref ref) {
       GoRoute(
         path: '/login',
         name: 'login',
-        builder: (context, state) => const PlaceholderScreen(title: 'Login'),
+        builder: (context, state) => const LoginScreen(),
       ),
       GoRoute(
         path: '/register',
         name: 'register',
-        builder: (context, state) => const PlaceholderScreen(title: 'Register'),
+        builder: (context, state) => const RegisterScreen(),
       ),
       GoRoute(
         path: '/favourites',
@@ -188,7 +145,7 @@ GoRouter router(Ref ref) {
     ],
     errorBuilder: (context, state) => ErrorScreen(error: state.error),
   );
-}
+});
 
 // Placeholder Screens (replace with actual screens)
 class SplashScreen extends StatefulWidget {
