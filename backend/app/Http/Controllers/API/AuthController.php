@@ -68,6 +68,15 @@ class AuthController extends Controller
         ]);
     }
 
+    public function me(): JsonResponse
+    {
+        return response()->json([
+            'success' => true,
+            'data' => $this->userData(auth()->user()),
+            'message' => 'User retrieved successfully.',
+        ]);
+    }
+
     private function userData(User $user): array
     {
         return [

@@ -43,6 +43,15 @@ class ApiService {
       throw _handleError(e);
     }
   }
+
+  Future<Map<String, dynamic>> getMe() async {
+    try {
+      final response = await _dioClient.get('/auth/me');
+      return response.data['data'] as Map<String, dynamic>;
+    } on DioException catch (e) {
+      throw _handleError(e);
+    }
+  }
   
   // ==================== PROPERTY ENDPOINTS ====================
   

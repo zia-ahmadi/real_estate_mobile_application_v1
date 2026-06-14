@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -35,23 +36,22 @@ class AuthNotifier extends StateNotifier<AuthState> {
   final FlutterSecureStorage _storage;
 
   AuthNotifier(this._apiService, this._storage) : super(AuthState()) {
-    _checkAuthStatus();
+    // We'll trigger auth check from SplashScreen instead
   }
 
-  Future<void> _checkAuthStatus() async {
+  Future<void> checkAuthStatus() async {
+    state = state.copyWith(status: AuthStatus.loading);
     try {
       final token = await _storage.read(key: 'auth_token');
-      final userData = await _storage.read(key: 'user_data');
       
-      if (token != null && userData != null) {
-        final user = User.fromJson(
-          Map<String, dynamic>.from(
-            // Decode JSON string
-            (userData is String) 
-              ? (const JsonDecoder().convert(userData) as Map<String, dynamic>)
-              : userData as Map<String, dynamic>
-          )
-        );
+      if (token != null) {
+        // Try to get current user to validate token
+        final userData = await _apiService.getMe();
+        final user = User.fromJson(userData);
+        
+        // Save updated user data
+        await _storage.write(key: 'user_data', jsonEncode(user.toJson()));
+        
         state = state.copyWith(
           status: AuthStatus.authenticated,
           user: user,
@@ -60,6 +60,9 @@ class AuthNotifier extends StateNotifier<AuthState> {
         state = state.copyWith(status: AuthStatus.unauthenticated);
       }
     } catch (e) {
+      // If any error (invalid token, etc.), clear storage and set to unauthenticated
+      await _storage.delete(key: 'auth_token');
+      await _storage.delete(key: 'user_data');
       state = state.copyWith(status: AuthStatus.unauthenticated);
     }
   }
@@ -75,7 +78,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
       
       // Save token and user data
       await _storage.write(key: 'auth_token', token);
-      await _storage.write(key: 'user_data', user.toJson());
+      await _storage.write(key: 'user_data', jsonEncode(user.toJson()));
       
       state = state.copyWith(
         status: AuthStatus.authenticated,
@@ -103,7 +106,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
       
       // Save token and user data
       await _storage.write(key: 'auth_token', token);
-      await _storage.write(key: 'user_data', user.toJson());
+      await _storage.write(key: 'user_data', jsonEncode(user.toJson()));
       
       state = state.copyWith(
         status: AuthStatus.authenticated,

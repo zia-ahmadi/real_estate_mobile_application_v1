@@ -175,24 +175,29 @@ final routerProvider = Provider<GoRouter>((ref) {
 });
 
 // Placeholder Screens (replace with actual screens)
-class SplashScreen extends StatefulWidget {
+class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({super.key});
 
   @override
-  State<SplashScreen> createState() => _SplashScreenState();
+  ConsumerState<SplashScreen> createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen> {
+class _SplashScreenState extends ConsumerState<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    _checkAuth();
+    _initialize();
   }
   
-  Future<void> _checkAuth() async {
-    // TODO: Implement actual auth check
-    await Future.delayed(const Duration(seconds: 2));
-    // The redirect logic in router will handle navigation
+  Future<void> _initialize() async {
+    // Show splash for at least 2 seconds
+    final minDelay = Future.delayed(const Duration(seconds: 2));
+    
+    // Check auth status
+    await ref.read(authProvider.notifier).checkAuthStatus();
+    
+    // Wait for the minimum delay to pass
+    await minDelay;
   }
   
   @override
@@ -203,15 +208,17 @@ class _SplashScreenState extends State<SplashScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            CircularProgressIndicator(
-              valueColor: AlwaysStoppedAnimation<Color>(AppColors.background),
+            Icon(
+              Icons.home_work,
+              size: 64,
+              color: AppColors.background,
             ),
             SizedBox(height: 24),
             Text(
               'Real Estate App',
               style: TextStyle(
                 color: AppColors.background,
-                fontSize: 24,
+                fontSize: 28,
                 fontWeight: FontWeight.bold,
               ),
             ),
